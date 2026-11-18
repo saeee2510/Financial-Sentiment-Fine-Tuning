@@ -17,10 +17,12 @@ Trained on 4,000 headlines for 2 epochs (about 6 minutes on an M-series Mac), ev
 
 ## What I noticed
 
-- **Bearish headlines improved the most** (F1 0.56 → 0.72). The baseline struggled here because negative news often doesn't use obviously negative words, so word counts alone miss it.
-- **The most common remaining mistake is Bullish predicted as Neutral** (97 cases). Many of these headlines are only mildly positive and read like plain statements of fact.
-- **Neutral and Bearish still get mixed up in both directions** (76 and 70 cases), which makes sense for short headlines where tone is subtle.
-- Validation macro-F1 rose from 0.739 after epoch 1 to 0.792 after epoch 2, so a third epoch might help a little. That's an easy next experiment.
+- **Bearish headlines improved the most** (F1 0.56 → 0.72), but every one of the model's most confident mistakes was a prediction of Neutral. When it's unsure, it defaults to the majority class.
+- **Press-release formatting looks "neutral" to the model.** Headlines like "BPH Energy : Settlement of Litigation #Stock #MarketScreener" were labeled Bullish but predicted Neutral. The template format seems to outweigh the content.
+- **Some headlines need financial knowledge, not just language.** "Chegg Reports 2019 Financial Results and Raises 2020 Guidance" is good news only if you know what raising guidance means for a stock.
+- **Trader slang and sarcasm get missed.** "$TSLA short 🤣" is clearly bearish to a trader, but the model reads it as neutral.
+- **The model is overconfident.** Its top mistakes all have 97–98% confidence, so the confidence scores shouldn't be used as-is, for example to decide which predictions to trust automatically.
+- Validation macro-F1 rose from 0.739 after epoch 1 to 0.792 after epoch 2, so a third epoch might still help.
 
 The most confident mistakes are in `output/errors.csv`. Some of them are headlines where I'd argue with the label myself.
 
@@ -61,3 +63,5 @@ Runs on Apple Silicon (MPS), a GPU, or CPU automatically. The first run download
 - Train on the full dataset and with 3 epochs, and compare.
 - Try a finance-specific model such as FinBERT.
 - Look at whether the model's confidence scores are well calibrated.
+- Calibrate the model's confidence (e.g. temperature scaling), since its most confident mistakes are 97%+ sure.
+- Try FinBERT, which is pretrained on financial text and may handle phrases like "raises guidance" better.
