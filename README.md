@@ -6,16 +6,23 @@ Data: the public [Twitter Financial News Sentiment](https://huggingface.co/datas
 
 ## Results
 
-<!-- Paste the table from output/report.md after running -->
-
 | Model | Accuracy | Macro-F1 | Bearish F1 | Bullish F1 | Neutral F1 |
 |---|---|---|---|---|---|
-| TF-IDF + logistic regression | | | | | |
-| Fine-tuned DistilBERT | | | | | |
+| TF-IDF + logistic regression | 0.772 | 0.689 | 0.562 | 0.645 | 0.861 |
+| Fine-tuned DistilBERT | 0.849 | 0.797 | 0.721 | 0.768 | 0.901 |
+
+Trained on 4,000 headlines for 2 epochs (about 6 minutes on an M-series Mac), evaluated on 2,388 held-out headlines. Fine-tuning raised macro-F1 by 0.107.
 
 ![Confusion matrices](output/confusion_matrices.png)
 
-**What I noticed:** <!-- after running, write 2-3 sentences: which classes improved most, which confusions remain, and one example from output/errors.csv -->
+## What I noticed
+
+- **Bearish headlines improved the most** (F1 0.56 → 0.72). The baseline struggled here because negative news often doesn't use obviously negative words, so word counts alone miss it.
+- **The most common remaining mistake is Bullish predicted as Neutral** (97 cases). Many of these headlines are only mildly positive and read like plain statements of fact.
+- **Neutral and Bearish still get mixed up in both directions** (76 and 70 cases), which makes sense for short headlines where tone is subtle.
+- Validation macro-F1 rose from 0.739 after epoch 1 to 0.792 after epoch 2, so a third epoch might help a little. That's an easy next experiment.
+
+The most confident mistakes are in `output/errors.csv`. Some of them are headlines where I'd argue with the label myself.
 
 ## How it works
 
@@ -32,18 +39,25 @@ Macro-F1 is the main metric because the classes are imbalanced (most headlines a
 ## Run
 
 ```bash
+python3 -m venv .venv && source .venv/bin/activate
 pip install -r requirements.txt
-python -m sentiment.run                  # 4,000 training headlines, 2 epochs (~20-40 min on a laptop CPU, faster on Apple Silicon)
+python -m sentiment.run                  # 4,000 training headlines, 2 epochs
 python -m sentiment.run --train-size 0   # full training set
+python -m sentiment.run --epochs 3       # one more epoch
 python -m sentiment.run --skip-finetune  # baseline only
 python -m unittest discover -s tests -t .
 ```
 
-Runs on Apple Silicon (MPS), a GPU, or CPU automatically.
+Runs on Apple Silicon (MPS), a GPU, or CPU automatically. The first run downloads the model (~270 MB) and the dataset.
 
 ## Limitations
 
 - Headlines are short and often ambiguous; some "errors" are labels a human would argue with.
-- Trained on a subset by default to keep runtime reasonable on a laptop.
+- Trained on a 4,000-headline subset by default to keep runtime reasonable on a laptop.
 - No hyperparameter search beyond picking the best epoch.
-# Financial-Sentiment-Fine-Tuning
+
+## Next steps
+
+- Train on the full dataset and with 3 epochs, and compare.
+- Try a finance-specific model such as FinBERT.
+- Look at whether the model's confidence scores are well calibrated.
