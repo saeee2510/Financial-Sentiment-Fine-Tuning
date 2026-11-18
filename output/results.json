@@ -1,0 +1,106 @@
+{
+  "sizes": {
+    "train": 4000,
+    "validation": 955,
+    "test": 2388
+  },
+  "results": {
+    "TF-IDF + logistic regression": {
+      "accuracy": 0.7721943048576214,
+      "macro_f1": 0.689465503173983,
+      "per_class": {
+        "Bearish": {
+          "precision": 0.5413333333333333,
+          "recall": 0.5850144092219021,
+          "f1": 0.5623268698060941,
+          "support": 347
+        },
+        "Bullish": {
+          "precision": 0.6359918200408998,
+          "recall": 0.6547368421052632,
+          "f1": 0.6452282157676349,
+          "support": 475
+        },
+        "Neutral": {
+          "precision": 0.8727034120734908,
+          "recall": 0.8492975734355045,
+          "f1": 0.86084142394822,
+          "support": 1566
+        }
+      },
+      "confusion_matrix": [
+        [
+          203,
+          58,
+          86
+        ],
+        [
+          56,
+          311,
+          108
+        ],
+        [
+          116,
+          120,
+          1330
+        ]
+      ]
+    },
+    "Fine-tuned distilbert-base-uncased": {
+      "accuracy": 0.8492462311557789,
+      "macro_f1": 0.7967840762972984,
+      "per_class": {
+        "Bearish": {
+          "precision": 0.7159090909090909,
+          "recall": 0.7262247838616714,
+          "f1": 0.721030042918455,
+          "support": 347
+        },
+        "Bullish": {
+          "precision": 0.7919463087248322,
+          "recall": 0.7452631578947368,
+          "f1": 0.7678958785249458,
+          "support": 475
+        },
+        "Neutral": {
+          "precision": 0.89490245437382,
+          "recall": 0.9080459770114943,
+          "f1": 0.9014263074484945,
+          "support": 1566
+        }
+      },
+      "confusion_matrix": [
+        [
+          252,
+          25,
+          70
+        ],
+        [
+          24,
+          354,
+          97
+        ],
+        [
+          76,
+          68,
+          1422
+        ]
+      ]
+    }
+  },
+  "baseline_seconds": 0.4,
+  "finetune_seconds": 351.6,
+  "device": "mps",
+  "history": [
+    {
+      "epoch": 1,
+      "train_loss": 0.6743752691745758,
+      "val_macro_f1": 0.7394283664020658
+    },
+    {
+      "epoch": 2,
+      "train_loss": 0.355844775557518,
+      "val_macro_f1": 0.7915325879273517
+    }
+  ]
+}
