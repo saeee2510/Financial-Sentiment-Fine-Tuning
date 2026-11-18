@@ -60,8 +60,7 @@ Runs on Apple Silicon (MPS), a GPU, or CPU automatically. The first run download
 
 ## Next steps
 
+
 - Train on the full dataset and with 3 epochs, and compare.
-- Try a finance-specific model such as FinBERT.
-- Look at whether the model's confidence scores are well calibrated.
 - Calibrate the model's confidence (e.g. temperature scaling), since its most confident mistakes are 97%+ sure.
 - Try FinBERT, which is pretrained on financial text and may handle phrases like "raises guidance" better.
